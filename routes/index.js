@@ -63,4 +63,45 @@ router.delete('/getDataByName/:name',async (req,res) => {
     }
 })
 
+router.post('/createData', async (req, res) => {
+    try {
+        const data = await readData();
+        const newProject = req.body;
+
+        const projectExists = data.some(p => p.name.toLowerCase() === newProject.name.toLowerCase());
+
+        let projectFormatError = false;
+
+        if (!newProject.name || typeof newProject.name !== "string") {
+            projectFormatError = true;
+        }
+
+        if (!newProject.users || typeof newProject.users !== "number" || !Number.isInteger(newProject.users)) {
+            projectFormatError = true;
+        }
+
+        if (!newProject.dashboards || typeof newProject.dashboards !== "number" || !Number.isInteger(newProject.dashboards)) {
+            projectFormatError = true;
+        }
+
+        if (!newProject.category || typeof newProject.category !== "string") {
+            projectFormatError = true;
+        }
+
+        if (projectExists) {
+            return res.status(400).json({ error: "Failed to add data because the project name has been used." });
+        } else if (projectFormatError) {
+            return res.status(400).json({ error: "Input format error." });
+        } else {
+            data.push(newProject);
+            await writeData(data);
+            res.status(201).json({ message: "Project created successfully", project: newProject });
+        }
+    } catch (error) {
+        console.error('Error creating project:', error);
+        res.status(500).json({ error: 'Failed to create project' });
+    }
+});
+
+
 module.exports = router;
