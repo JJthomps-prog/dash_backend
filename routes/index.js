@@ -50,18 +50,25 @@ router.get('/getDataByName/:name', async (req, res) => {
     }
 });
 
-router.delete('/getDataByName/:name',async (req,res) => {
-    const data =await readData();
-    const projectName = req.params.name;
-    const projectIndex = data.find(p => p.name.toLowerCase() === projectName.toLowerCase());
-    if (projectIndex!==-1){
-        const deletedProject = data.splice(projectIndex, 1);
-        writeData(data);
-        res.json(deletedProject);
-    }else{
-        res.status(404).json({error:'Failed to get data by name. Can not delete.'})
+router.delete('/getDataByName/:name', async (req, res) => {
+    try {
+        const data = await readData();
+        const projectName = req.params.name.toLowerCase();
+        const projectIndex = data.findIndex(p => p.name.toLowerCase() === projectName);
+
+        if (projectIndex !== -1) {
+            const [deletedProject] = data.splice(projectIndex, 1);
+            await writeData(data);
+            res.json(deletedProject);
+        } else {
+            res.status(404).json({ error: 'Failed to get data by name. Cannot delete.' });
+        }
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        res.status(500).json({ error: 'Failed to delete project' });
     }
-})
+});
+
 
 router.post('/createData', async (req, res) => {
     try {
