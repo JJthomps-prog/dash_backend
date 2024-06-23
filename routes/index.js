@@ -85,11 +85,12 @@ router.post('/createData', async (req, res) => {
             projectFormatError = true;
         }
 
-        if (!newProject.users || typeof newProject.users !== "number" || !Number.isInteger(newProject.users)) {
+
+        if (!Number.isInteger(newProject.users) || newProject.users < 0) {
             projectFormatError = true;
         }
 
-        if (!newProject.dashboards || typeof newProject.dashboards !== "number" || !Number.isInteger(newProject.dashboards)) {
+        if (!Number.isInteger(newProject.dashboards) || newProject.dashboards < 0) {
             projectFormatError = true;
         }
 
