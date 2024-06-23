@@ -94,7 +94,7 @@ router.post('/createData', async (req, res) => {
             projectFormatError = true;
         }
 
-        if (!newProject.category || typeof newProject.category !== "string") {
+        if (!newProject.category || typeof newProject.category !== "string" || (newProject.category !=="A"&&newProject.category !=="B"&&newProject.category !=="C"&&newProject.category !=="D"&&newProject.category !=="E"&&newProject.category !=="F")) {
             projectFormatError = true;
         }
 
