@@ -35,20 +35,22 @@ router.get('/getAllData', async (req, res) => {
 
 router.get('/getDataByName/:name', async (req, res) => {
     try {
-        const data = await readData();
-        const projectName = req.params.name;
-        const project = data.find(p => p.name.toLowerCase() === projectName.toLowerCase());
-
-        if (project) {
-            res.json(project);
-        } else {
-            res.status(404).json({ error: 'Project not found' });
-        }
+      const data = await readData();
+      const projectName = req.params.name.toLowerCase();
+      
+      const matchingProjects = data.filter(p => p.name.toLowerCase().includes(projectName));
+  
+      if (matchingProjects.length > 0) {
+        res.json(matchingProjects);
+      } else {
+        res.status(404).json({ error: 'No projects found' });
+      }
     } catch (error) {
-        console.error('Error getting data by name:', error);
-        res.status(500).json({ error: 'Failed to get data by name' });
+      console.error('Error getting data by name:', error);
+      res.status(500).json({ error: 'Failed to get data by name' });
     }
-});
+  });
+  
 
 router.delete('/getDataByName/:name', async (req, res) => {
     try {
